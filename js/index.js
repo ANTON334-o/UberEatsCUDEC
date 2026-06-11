@@ -43,3 +43,10 @@ function mostrarplatillo(platillo,  id) {
   document.querySelector('.recipes').innerHTML = contenido;
 }
 
+function actualizarplatillo(platillo, id) {
+  let tarjeta = document.getElementById(`${id}`);
+  tarjeta.querySelector('.recipe-title').innerHTML = platillo.nombre;
+  tarjeta.querySelector('.recipe-ingredients').innerHTML = platillo.ingredientes;
+  tarjeta.querySelector('.recipe-title:last-child').innerHTML = `Precio: $${platillo.precio}`;
+}
+
