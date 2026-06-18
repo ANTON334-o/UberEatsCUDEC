@@ -1,12 +1,15 @@
-db.collection("platillos").onSnapshot((datos)=>{
-   datos.forEach((registro) => {
-    mostrarplatillo(registro.data(),registro.id);
-  
-    
-   });
+db.collection("platillos").onSnapshot((datos) => {
+datos.docChanges().forEach((registro) => {
 
 
-
+        if (registro.type === "added"){
+            mostrarPlatillo(registro.doc.data(), registro.doc.id);
+            actualizaralista();
+        }
+        if (registro.type ==="modified") {
+            actualizarPlatillo (registro.doc.data(),registro.doc.id);
+        }
+    });
 });
 
 const formularioAgregar = document.querySelector("form");
