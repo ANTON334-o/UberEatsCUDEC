@@ -50,3 +50,22 @@ function actualizarplatillo(platillo, id) {
   tarjeta.querySelector('.recipe-title:last-child').innerHTML = `Precio: $${platillo.precio}`;
 }
 
+
+
+document.querySelector('.recipes').addEventListener('click', function(e) {
+  const icono = e.target.closest('.recipe-delete .material-icons');
+  if (!icono) return;
+
+  const id = icono.dataset.id;
+
+  db.collection("platillos").doc(id).delete()
+    .then(() => {
+      const tarjeta = document.getElementById(id);
+      if (tarjeta) tarjeta.remove();
+      alert('Platillo eliminado');
+    })
+    .catch((error) => {
+      console.log(error);
+      alert('Error al eliminar el platillo');
+    });
+});

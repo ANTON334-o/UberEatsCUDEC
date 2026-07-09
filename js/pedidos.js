@@ -35,19 +35,25 @@ document.getElementById('btnUbicacion').addEventListener('click', function() {
 function exito(posicion) {
   let latitud = posicion.coords.latitude;
   let longitud = posicion.coords.longitude;
-  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitud}&lon=${longitud} `, {
+  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitud}&lon=${longitud}&format=json`, {
     headers: {
       'User-Agent': 'UberEatscudeceliseo/1.0 (eliseogamer64@gmail.com)'
     }
-  })
-  .then(respuesta => respuesta.json())
-  .then(data => alert(data.display_name))
-  .catch(error =>  console.error(error));
   
-}
-function error() {
+ 
+})
+ .then(respuesta => respuesta.json())
+.then(data => {
+  let ciudad = data.address.city;
+    let pais = data.address.country;
+    document.getElementById("title").value = `${ciudad}, ${pais}`;
+
+
+})
+.catch(error => {
+  console.error('Error al obtener la ubicación:', error);
   M.toast({html: 'No se pudo obtener la ubicación'});
-}
+});
 document.getElementById('btnGuardar').addEventListener('click', async () => {
   const select = document.getElementById('listaPlatillos');
   const platilloId = select.value;
