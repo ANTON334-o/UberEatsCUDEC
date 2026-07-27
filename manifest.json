@@ -1,11 +1,16 @@
 {
-  "name": "UberEatsCUDECELISEO",
-  "theme_color": "#c53df3",
-  "short_name": "NinjaFood",
+  "name": "Parrivo Market",
+  "theme_color": "#970fea",
+  "short_name": "Parrivo Market",
   "display": "standalone",
   "orientation": "portrait",
   "lang": "es",
   "icons": [
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
     {
       "src": "icon-16x16.png",
       "type": "image/png",
