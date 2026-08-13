@@ -69,3 +69,65 @@ document.querySelector('.recipes').addEventListener('click', function(e) {
       alert('Error al eliminar el platillo');
     });
 });
+
+let streaming = false;
+const width = 100;
+let height = 0;
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const foto = document.getElementById("foto");
+const btnFoto = document.getElementById('btnFoto');
+const btnCapturar = document.getElementById('tomarFoto');
+
+btnFoto.addEventListener("click", function(e){
+  e.preventDefault();
+  navigator.mediaDevices
+    .getUserMedia({
+      video: {
+        facingMode: { ideal: "environment" }
+      },
+      audio: false
+    })
+    .then((stream) => {
+      video.srcObject = stream;
+      video.play();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
+
+video.addEventListener("canplay", function(){
+  if (!streaming){
+    height = video.videoHeight / (video.videoWidth / width);
+    video.setAttribute("width", width);
+    video.setAttribute("height", height);
+    streaming = true;
+  }
+});
+
+function limpiarFoto(){
+  const contexto = canvas.getContext("2d");
+  contexto.fillStyle = "#AAA";
+  contexto.fillRect(0, 0, canvas.width, canvas.height);
+  foto.setAttribute("src", "");
+}
+
+function capturarFoto(){
+  const contexto = canvas.getContmext("2d");
+  if (width && height){
+    canvas.width = width;
+    canvas.height = height;
+    contexto.drawImage(video, 0, 0, width, height);
+    const fotoFinal = canvas.toDataURL("image/png");
+    foto.setAttribute("src", fotoFinal);
+  } else {
+    limpiarFoto();
+  }
+}
+
+btnCapturar.addEventListener("click", function(e){
+  e.preventDefault();
+  capturarFoto();
+});
