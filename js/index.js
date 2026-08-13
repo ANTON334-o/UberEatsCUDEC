@@ -82,6 +82,8 @@ const btnCapturar = document.getElementById('btnCapturar');
 
 btnFoto.addEventListener("click", function(e){
   e.preventDefault();
+  video.style.display = "";
+  foto.setAttribute("src", "");
   navigator.mediaDevices
     .getUserMedia({
       video: {
@@ -122,6 +124,10 @@ function capturarFoto(){
     contexto.drawImage(video, 0, 0, width, height);
     const fotoFinal = canvas.toDataURL("image/png");
     foto.setAttribute("src", fotoFinal);
+    video.style.display = "none";
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(function(track){ track.stop(); });
+    }
   } else {
     limpiarFoto();
   }
