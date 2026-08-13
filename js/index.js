@@ -78,7 +78,7 @@ const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const foto = document.getElementById("foto");
 const btnFoto = document.getElementById('btnFoto');
-const btnCapturar = document.getElementById('tomarFoto');
+const btnCapturar = document.getElementById('btnCapturar');
 
 btnFoto.addEventListener("click", function(e){
   e.preventDefault();
@@ -115,7 +115,7 @@ function limpiarFoto(){
 }
 
 function capturarFoto(){
-  const contexto = canvas.getContmext("2d");
+  const contexto = canvas.getContext("2d");
   if (width && height){
     canvas.width = width;
     canvas.height = height;
