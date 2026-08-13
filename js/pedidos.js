@@ -56,7 +56,7 @@ document.getElementById('btnGuardar').addEventListener('click', async () => {
     });
 
     M.toast({html: 'Pedido guardado correctamente'});
-    window.location.href = '../';
+    window.location.href = '/';
   } catch (error) {
     console.error('Error al guardar el pedido:', error);
     M.toast({html: 'Ocurrió un error al guardar'});
@@ -64,7 +64,7 @@ document.getElementById('btnGuardar').addEventListener('click', async () => {
 });
 
 document.getElementById('btnCancelar').addEventListener('click', () => {
-  window.location.href = '../';
+  window.location.href = '/';
 });
 
 
@@ -84,7 +84,7 @@ function exito(posicion) {
   let ciudad = data.address.city;
     let pais = data.address.country;
     document.getElementById("title").value = `${ciudad}, ${pais}`;
-    var map = L.map('mapa').setView([latitud, longitud], 13);
+    var map = L.map(mapa).setView([latitud, longitud], 13);
     L.tileLayer
     ('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
