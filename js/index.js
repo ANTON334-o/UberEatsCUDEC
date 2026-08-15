@@ -82,40 +82,56 @@ const btnFoto = document.getElementById('btnFoto');
 const btnCapturar = document.getElementById('btnCapturar');
 const btnVoltear = document.getElementById('btnVoltear');
 let facingMode = "environment";
+let currentDeviceId = null;
+let camaraIniciada = false;
 
-function iniciarCamara(){
-  streaming = false;
-  height = 0;
-  video.style.display = "";
+function pararCamara(){
   if (video.srcObject) {
     video.srcObject.getTracks().forEach(function(track){ track.stop(); });
     video.srcObject = null;
   }
-  navigator.mediaDevices
-    .getUserMedia({
-      video: {
-        facingMode: { exact: facingMode }
-      },
-      audio: false
-    })
-    .then((stream) => {
-      video.srcObject = stream;
-      video.play();
+}
+
+function abrirStream(constraints){
+  streaming = false;
+  height = 0;
+  video.style.display = "";
+  return navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    video.srcObject = stream;
+    video.play();
+    camaraIniciada = true;
+    const track = stream.getVideoTracks()[0];
+    if (track && track.getSettings) {
+      currentDeviceId = track.getSettings().deviceId || currentDeviceId;
+    }
+  });
+}
+
+function iniciarCamara(){
+  pararCamara();
+  abrirStream({ video: { facingMode: { ideal: facingMode } }, audio: false })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+function voltearCamara(){
+  pararCamara();
+  navigator.mediaDevices.enumerateDevices()
+    .then((devices) => {
+      const camaras = devices.filter((d) => d.kind === "videoinput");
+      if (camaras.length > 1) {
+        const indiceActual = camaras.findIndex((d) => d.deviceId === currentDeviceId);
+        const siguiente = camaras[(indiceActual + 1) % camaras.length];
+        return abrirStream({ video: { deviceId: { exact: siguiente.deviceId } }, audio: false });
+      }
+      // Solo se detectó una cámara: intentamos alternar por facingMode como respaldo
+      facingMode = facingMode === "environment" ? "user" : "environment";
+      return abrirStream({ video: { facingMode: { exact: facingMode } }, audio: false })
+        .catch(() => abrirStream({ video: { facingMode: { ideal: facingMode } }, audio: false }));
     })
     .catch((error) => {
-      // El dispositivo no tiene esa cámara exacta (p.ej. solo tiene una): usamos la que haya disponible
-      navigator.mediaDevices
-        .getUserMedia({
-          video: { facingMode: { ideal: facingMode } },
-          audio: false
-        })
-        .then((stream) => {
-          video.srcObject = stream;
-          video.play();
-        })
-        .catch((error2) => {
-          console.log(error2);
-        });
+      console.log(error);
     });
 }
 
@@ -128,9 +144,10 @@ btnFoto.addEventListener("click", function(e){
 
 btnVoltear.addEventListener("click", function(e){
   e.preventDefault();
-  facingMode = facingMode === "environment" ? "user" : "environment";
-  if (video.srcObject) {
-    iniciarCamara();
+  if (camaraIniciada) {
+    voltearCamara();
+  } else {
+    facingMode = facingMode === "environment" ? "user" : "environment";
   }
 });
 
