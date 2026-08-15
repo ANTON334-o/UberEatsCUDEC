@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function mostrarplatillo(platillo,  id) {
    contenido += 
    `<div class="card-panel recipe white row" data-id="${id}">
+   ${platillo.foto ? `<img src="${platillo.foto}" alt="${platillo.nombre}" class="recipe-photo">` : ""}
    <div class="recipe-details">
    <div class="recipe-title">
    ${platillo.nombre}
@@ -159,7 +160,7 @@ function capturarFoto(){
     contexto.drawImage(video, 0, 0, width, h);
     const fotoFinal = canvas.toDataURL("image/png");
     foto.setAttribute("src", fotoFinal);
-    foto.style.display = "";
+    foto.style.display = "block";
     video.style.display = "none";
     if (video.srcObject) {
       video.srcObject.getTracks().forEach(function(track){ track.stop(); });
