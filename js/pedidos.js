@@ -56,7 +56,10 @@ document.getElementById('btnGuardar').addEventListener('click', async () => {
     });
 
     M.toast({html: 'Pedido guardado correctamente'});
-    window.location.href = '../';
+    document.getElementById('title').value = '';
+    select.value = '';
+    var elemsSelect = document.querySelectorAll('select');
+    M.FormSelect.init(elemsSelect, {});
   } catch (error) {
     console.error('Error al guardar el pedido:', error);
     M.toast({html: 'Ocurrió un error al guardar'});
@@ -64,7 +67,12 @@ document.getElementById('btnGuardar').addEventListener('click', async () => {
 });
 
 document.getElementById('btnCancelar').addEventListener('click', () => {
-  window.location.href = '../';
+  document.getElementById('title').value = '';
+  const select = document.getElementById('listaPlatillos');
+  select.value = '';
+  var elemsSelect = document.querySelectorAll('select');
+  M.FormSelect.init(elemsSelect, {});
+  M.toast({html: 'Pedido cancelado'});
 });
 
 
@@ -81,9 +89,9 @@ function exito(posicion) {
 })
  .then(respuesta => respuesta.json())
 .then(data => {
-  let ciudad = data.address.city;
-    let pais = data.address.country;
-    document.getElementById("title").value = `${ciudad}, ${pais}`;
+    let direccion = data.display_name
+      || `${data.address.city || data.address.town || data.address.village || ''}, ${data.address.country || ''}`;
+    document.getElementById("title").value = direccion;
     var map = L.map('mapa').setView([latitud, longitud], 13);
     L.tileLayer
     ('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {

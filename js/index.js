@@ -45,7 +45,8 @@ function mostrarplatillo(platillo,  id) {
 }
 
 function actualizarplatillo(platillo, id) {
-  let tarjeta = document.getElementById(`${id}`);
+  let tarjeta = document.querySelector('[data-id="' + id + '"]');
+  if (!tarjeta) return;
   tarjeta.querySelector('.recipe-title').innerHTML = platillo.nombre;
   tarjeta.querySelector('.recipe-ingredients').innerHTML = platillo.ingredientes;
   tarjeta.querySelector('.recipe-title:last-child').innerHTML = `Precio: $${platillo.precio}`;
@@ -61,7 +62,7 @@ document.querySelector('.recipes').addEventListener('click', function(e) {
 
   db.collection("platillos").doc(id).delete()
     .then(() => {
-      const tarjeta = document.getElementById(id);
+      const tarjeta = document.querySelector('[data-id="' + id + '"]');
       if (tarjeta) tarjeta.remove();
       alert('Platillo eliminado');
     })
