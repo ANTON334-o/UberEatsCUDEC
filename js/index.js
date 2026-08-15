@@ -90,6 +90,7 @@ function pararCamara(){
   if (video.srcObject) {
     video.srcObject.getTracks().forEach(function(track){ track.stop(); });
     video.srcObject = null;
+    video.load();
   }
 }
 
@@ -99,7 +100,12 @@ function abrirStream(constraints){
   video.style.display = "";
   return navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
     video.srcObject = stream;
-    video.play();
+    const intentoReproducir = video.play();
+    if (intentoReproducir && intentoReproducir.catch) {
+      intentoReproducir.catch(function(){
+        setTimeout(function(){ video.play().catch(function(err){ console.log(err); }); }, 150);
+      });
+    }
     camaraIniciada = true;
     const track = stream.getVideoTracks()[0];
     if (track && track.getSettings) {
@@ -110,7 +116,7 @@ function abrirStream(constraints){
 
 function iniciarCamara(){
   pararCamara();
-  abrirStream({ video: { facingMode: { ideal: facingMode } }, audio: false })
+  abrirStream({ video: { facingMode: { ideal: facingMode }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false })
     .catch((error) => {
       console.log(error);
     });
@@ -124,12 +130,12 @@ function voltearCamara(){
       if (camaras.length > 1) {
         const indiceActual = camaras.findIndex((d) => d.deviceId === currentDeviceId);
         const siguiente = camaras[(indiceActual + 1) % camaras.length];
-        return abrirStream({ video: { deviceId: { exact: siguiente.deviceId } }, audio: false });
+        return abrirStream({ video: { deviceId: { exact: siguiente.deviceId }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
       }
       // Solo se detectó una cámara: intentamos alternar por facingMode como respaldo
       facingMode = facingMode === "environment" ? "user" : "environment";
-      return abrirStream({ video: { facingMode: { exact: facingMode } }, audio: false })
-        .catch(() => abrirStream({ video: { facingMode: { ideal: facingMode } }, audio: false }));
+      return abrirStream({ video: { facingMode: { exact: facingMode }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false })
+        .catch(() => abrirStream({ video: { facingMode: { ideal: facingMode }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }));
     })
     .catch((error) => {
       console.log(error);
