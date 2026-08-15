@@ -79,25 +79,44 @@ const canvas = document.getElementById("canvas");
 const foto = document.getElementById("foto");
 const btnFoto = document.getElementById('btnFoto');
 const btnCapturar = document.getElementById('btnCapturar');
+const btnVoltear = document.getElementById('btnVoltear');
+let facingMode = "environment";
 
-btnFoto.addEventListener("click", function(e){
-  e.preventDefault();
+function iniciarCamara(){
+  streaming = false;
   video.style.display = "";
-  foto.setAttribute("src", "");
   navigator.mediaDevices
     .getUserMedia({
       video: {
-        facingMode: { ideal: "environment" }
+        facingMode: { ideal: facingMode }
       },
       audio: false
     })
     .then((stream) => {
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(function(track){ track.stop(); });
+      }
       video.srcObject = stream;
       video.play();
     })
     .catch((error) => {
       console.log(error);
     });
+}
+
+btnFoto.addEventListener("click", function(e){
+  e.preventDefault();
+  foto.setAttribute("src", "");
+  foto.style.display = "none";
+  iniciarCamara();
+});
+
+btnVoltear.addEventListener("click", function(e){
+  e.preventDefault();
+  facingMode = facingMode === "environment" ? "user" : "environment";
+  if (video.srcObject) {
+    iniciarCamara();
+  }
 });
 
 video.addEventListener("canplay", function(){
@@ -124,6 +143,7 @@ function capturarFoto(){
     contexto.drawImage(video, 0, 0, width, height);
     const fotoFinal = canvas.toDataURL("image/png");
     foto.setAttribute("src", fotoFinal);
+    foto.style.display = "";
     video.style.display = "none";
     if (video.srcObject) {
       video.srcObject.getTracks().forEach(function(track){ track.stop(); });
