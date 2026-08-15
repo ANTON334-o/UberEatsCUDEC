@@ -84,23 +84,37 @@ let facingMode = "environment";
 
 function iniciarCamara(){
   streaming = false;
+  height = 0;
   video.style.display = "";
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(function(track){ track.stop(); });
+    video.srcObject = null;
+  }
   navigator.mediaDevices
     .getUserMedia({
       video: {
-        facingMode: { ideal: facingMode }
+        facingMode: { exact: facingMode }
       },
       audio: false
     })
     .then((stream) => {
-      if (video.srcObject) {
-        video.srcObject.getTracks().forEach(function(track){ track.stop(); });
-      }
       video.srcObject = stream;
       video.play();
     })
     .catch((error) => {
-      console.log(error);
+      // El dispositivo no tiene esa cámara exacta (p.ej. solo tiene una): usamos la que haya disponible
+      navigator.mediaDevices
+        .getUserMedia({
+          video: { facingMode: { ideal: facingMode } },
+          audio: false
+        })
+        .then((stream) => {
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch((error2) => {
+          console.log(error2);
+        });
     });
 }
 
@@ -137,10 +151,12 @@ function limpiarFoto(){
 
 function capturarFoto(){
   const contexto = canvas.getContext("2d");
-  if (width && height){
+  const w = video.videoWidth || width;
+  const h = video.videoHeight ? (video.videoHeight / (video.videoWidth / width)) : height;
+  if (video.readyState >= 2 && w && h){
     canvas.width = width;
-    canvas.height = height;
-    contexto.drawImage(video, 0, 0, width, height);
+    canvas.height = h;
+    contexto.drawImage(video, 0, 0, width, h);
     const fotoFinal = canvas.toDataURL("image/png");
     foto.setAttribute("src", fotoFinal);
     foto.style.display = "";
