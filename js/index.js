@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const menus = document.querySelectorAll('.side-menu');
   M.Sidenav.init(menus, { edge: 'right' });
 
-  // formulario
+o
   const forms = document.querySelectorAll('.side-form');
   M.Sidenav.init(forms, { edge: 'left' });
 
@@ -132,7 +132,7 @@ function voltearCamara(){
         const siguiente = camaras[(indiceActual + 1) % camaras.length];
         return abrirStream({ video: { deviceId: { exact: siguiente.deviceId }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
       }
-      // Solo se detectó una cámara: intentamos alternar por facingMode como respaldo
+      
       facingMode = facingMode === "environment" ? "user" : "environment";
       return abrirStream({ video: { facingMode: { exact: facingMode }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false })
         .catch(() => abrirStream({ video: { facingMode: { ideal: facingMode }, width: { ideal: 640 }, height: { ideal: 480 } }, audio: false }));
